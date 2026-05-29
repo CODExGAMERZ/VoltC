@@ -7,7 +7,7 @@ description: |
   and Monaco Editor, it features isolated compilation, live output streams,
   and variable memory map visualizers.
 grade: stable
-confinement: classic
+confinement: strict
 base: core22
 
 parts:
