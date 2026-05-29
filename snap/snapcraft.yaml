@@ -8,7 +8,7 @@ description: |
   and variable memory map visualizers.
 grade: stable
 confinement: strict
-base: core22
+base: core20
 
 parts:
   voltc:
