@@ -81,6 +81,7 @@ description: |
   and variable memory map visualizers.
 grade: stable
 confinement: classic # Needs filesystem and compiler command executions
+base: core24
 
 parts:
   voltc-bin:
