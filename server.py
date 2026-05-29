@@ -4,6 +4,12 @@ import threading
 import time
 import sys
 
+# Ensure PyInstaller bundles these modules
+import backend.app
+import backend.compiler
+import backend.runner
+import backend.lsp
+
 # Global flag to open browser fallback if webview fails
 USE_BROWSER_FALLBACK = True
 
