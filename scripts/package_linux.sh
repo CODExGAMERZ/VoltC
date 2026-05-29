@@ -7,8 +7,9 @@ echo "=== VoltC IDE Ubuntu Linux Packaging System ==="
 
 # 1. COMPILE BACKEND BINARY
 echo "[VoltC Packager] Compiling standalone backend executable..."
-python3 -m pip install pyinstaller fastapi uvicorn websockets pywebview
-python3 scripts/build_backend.py
+python3 -m venv venv
+./venv/bin/pip install pyinstaller fastapi uvicorn websockets pywebview
+./venv/bin/python scripts/build_backend.py
 
 # Ensure build artifacts exist
 if [ ! -f "dist/voltc-backend" ]; then
