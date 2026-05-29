@@ -4,6 +4,13 @@ import threading
 import time
 import sys
 
+# Ensure PyInstaller packages GObject/GTK bindings on Linux
+try:
+    import gi
+    gi.require_version('Gtk', '3.0')
+except (ImportError, ValueError):
+    pass
+
 # Ensure PyInstaller bundles these modules
 import backend.app
 import backend.compiler
