@@ -18,8 +18,16 @@ parts:
       # Install build dependencies in a virtual environment with system site packages
       # to inherit system GObject (GTK/WebKit) python bindings
       python3 -m venv --system-site-packages venv
-      ./venv/bin/pip install --upgrade pip
-      ./venv/bin/pip install pyinstaller fastapi uvicorn websockets pywebview pydantic
+      # Install dependencies using locally downloaded wheels if available
+      if [ -d "wheels" ]; then
+        echo "Found local wheels directory, installing offline..."
+        ./venv/bin/pip install --no-index --find-links=wheels/ --upgrade pip
+        ./venv/bin/pip install --no-index --find-links=wheels/ pyinstaller fastapi uvicorn websockets pywebview pydantic
+      else
+        echo "Local wheels directory not found, installing from PyPI..."
+        ./venv/bin/pip install --upgrade pip
+        ./venv/bin/pip install pyinstaller fastapi uvicorn websockets pywebview pydantic
+      fi
       # Build the standalone binary
       ./venv/bin/python scripts/build_backend.py
       # Install into snap structure
