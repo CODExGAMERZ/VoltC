@@ -42,8 +42,8 @@ def list_workspace_files(dir_path: Path = WORKSPACE_DIR) -> List[FileItem]:
         for entry in os.scandir(dir_path):
             entry_path = Path(entry.path)
             
-            # Skip hidden files/directories (like .voltc, git files)
-            if entry.name.startswith('.'):
+            # Skip hidden files/directories and build/deployment folders
+            if entry.name.startswith('.') or entry.name in ('parts', 'stage', 'prime', 'build', 'dist', 'venv'):
                 continue
                 
             is_dir = entry.is_dir()
