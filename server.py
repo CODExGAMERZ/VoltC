@@ -56,5 +56,15 @@ if __name__ == "__main__":
         print(f"[VoltC] Webview window unavailable. Starting in web fallback mode. Details: {e}")
         
         threading.Thread(target=open_browser, daemon=True).start()
-        uvicorn.run("backend.app:app", host="127.0.0.1", port=5000, reload=reload)
+        
+        if 'server_thread' in locals() and server_thread.is_alive():
+            # Server is already running in the background thread, keep main thread alive
+            try:
+                while True:
+                    time.sleep(1)
+            except KeyboardInterrupt:
+                pass
+        else:
+            # Server is not running, start it in the main thread
+            uvicorn.run("backend.app:app", host="127.0.0.1", port=5000, reload=reload)
 
