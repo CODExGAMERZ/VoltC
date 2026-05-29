@@ -1,0 +1,45 @@
+name: voltc
+version: '1.0'
+summary: VoltC C programming IDE
+description: |
+  VoltC is a modern, lightweight C programming environment specifically
+  engineered for students and beginners. Built on top of FastAPI
+  and Monaco Editor, it features isolated compilation, live output streams,
+  and variable memory map visualizers.
+grade: stable
+confinement: classic
+base: core22
+
+parts:
+  voltc:
+    plugin: nil
+    source: .
+    override-build: |
+      # Install build dependencies
+      python3 -m pip install --upgrade pip
+      python3 -m pip install pyinstaller fastapi uvicorn websockets pywebview pydantic
+      # Build the standalone binary
+      python3 scripts/build_backend.py
+      # Install into snap structure
+      mkdir -p $SNAPCRAFT_PART_INSTALL/bin
+      cp dist/voltc-backend $SNAPCRAFT_PART_INSTALL/bin/voltc
+    build-packages:
+      - python3-pip
+      - python3-setuptools
+      - python3-dev
+    stage-packages:
+      - python3-webview
+      - gcc
+      - clangd
+
+apps:
+  voltc:
+    command: bin/voltc
+    plugs:
+      - home
+      - network
+      - network-bind
+      - x11
+      - unity7
+      - opengl
+      - gsettings

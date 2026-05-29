@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoltC IDE - Modern C Development Platform</title>
+    <!-- Google Fonts for premium typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom stylesheet -->
+    <link rel="stylesheet" href="style.css">
+    <!-- RequireJS for Monaco Editor CDN Loading -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Top Toolbar -->
+        <header class="top-bar">
+            <div class="logo-area">
+                <i class="fa-solid fa-bolt-lightning crimson-text logo-icon"></i>
+                <span class="logo-title">Volt<span class="crimson-text">C</span></span>
+                <span class="logo-badge">IDE v1.0</span>
+            </div>
+            
+            <div class="action-buttons">
+                <button id="btn-save" class="toolbar-btn" title="Save File (Ctrl+S)">
+                    <i class="fa-solid fa-floppy-disk"></i> Save
+                </button>
+                <div class="btn-divider"></div>
+                <button id="btn-compile" class="toolbar-btn build-btn" title="Compile Code (Ctrl+B)">
+                    <i class="fa-solid fa-hammer"></i> Compile
+                </button>
+                <button id="btn-run" class="toolbar-btn run-btn" title="Compile and Run (Ctrl+R)">
+                    <i class="fa-solid fa-play"></i> Run
+                </button>
+                <div class="btn-divider"></div>
+                <div class="flag-input-group">
+                    <span class="flag-label">GCC Flags:</span>
+                    <input type="text" id="compiler-flags" value="-Wall -Wextra -std=c11" placeholder="e.g. -Wall -std=c11" title="Custom GCC compiler flags">
+                </div>
+                <div class="config-dropdown-group">
+                    <select id="build-config" title="Build configuration">
+                        <option value="debug">Debug (-g)</option>
+                        <option value="release">Release (-O2)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="toolbar-right">
+                <button id="btn-settings" class="icon-btn" title="IDE Settings"><i class="fa-solid fa-gear"></i></button>
+            </div>
+        </header>
+
+        <!-- Main Workspace Workspace -->
+        <div class="workspace">
+            <!-- Left Explorer Sidebar -->
+            <aside class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <span>EXPLORER</span>
+                    <div class="explorer-actions">
+                        <button id="btn-new-file" title="New File"><i class="fa-solid fa-file-circle-plus"></i></button>
+                        <button id="btn-new-folder" title="New Folder"><i class="fa-solid fa-folder-plus"></i></button>
+                        <button id="btn-refresh-explorer" title="Refresh Explorer"><i class="fa-solid fa-rotate"></i></button>
+                    </div>
+                </div>
+                <!-- File Tree Container -->
+                <div class="file-tree" id="file-tree">
+                    <div class="loading-spinner"><i class="fa-solid fa-spinner fa-spin"></i> Loading workspace...</div>
+                </div>
+            </aside>
+
+            <!-- Resizer between Sidebar and Editor -->
+            <div class="resizer" id="sidebar-resizer"></div>
+
+            <!-- Central Area (Editor and Bottom Panel) -->
+            <main class="editor-area-container">
+                <!-- Editor Pane -->
+                <div class="editor-pane">
+                    <!-- Tab Navigation Bar -->
+                    <div class="tabs-bar" id="tabs-bar">
+                        <div class="tabs-scroll-container" id="tabs-container">
+                            <!-- Tabs dynamically inserted here -->
+                        </div>
+                        <div class="editor-actions">
+                            <button id="btn-split-editor" title="Split Editor (Ctrl+\)"><i class="fa-solid fa-columns"></i></button>
+                        </div>
+                    </div>
+                    
+                    <!-- Monaco Viewport Container -->
+                    <div class="editors-viewport-container" id="editors-viewport">
+                        <div class="editor-container-wrapper" id="editor-wrapper-left">
+                            <div class="monaco-editor-instance" id="editor-left"></div>
+                        </div>
+                        <div class="editor-container-wrapper hidden" id="editor-wrapper-right">
+                            <div class="monaco-editor-instance" id="editor-right"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resizer between Editor and Bottom Panel -->
+                <div class="resizer-h" id="bottom-resizer"></div>
+
+                <!-- Bottom Tabbed Panels -->
+                <section class="bottom-panel" id="bottom-panel">
+                    <div class="panel-tabs">
+                        <button class="panel-tab-btn active" data-target="panel-terminal">
+                            <i class="fa-solid fa-terminal"></i> Terminal Output
+                        </button>
+                        <button class="panel-tab-btn" data-target="panel-problems">
+                            <i class="fa-solid fa-circle-exclamation"></i> Problems <span class="badge hidden" id="problems-count">0</span>
+                        </button>
+                        <button class="panel-tab-btn" data-target="panel-explanation">
+                            <i class="fa-solid fa-graduation-cap"></i> Beginner Explanations
+                        </button>
+                    </div>
+                    
+                    <div class="panel-contents">
+                        <!-- Terminal Panel -->
+                        <div class="panel-content active" id="panel-terminal">
+                            <div class="terminal-container">
+                                <div class="terminal-body" id="terminal-output">
+                                    <div class="terminal-line system-line">Welcome to VoltC Terminal. Click 'Run' to execute C programs.</div>
+                                </div>
+                                <div class="terminal-input-line">
+                                    <span class="terminal-prompt">$</span>
+                                    <input type="text" id="terminal-input" placeholder="Type input here and press Enter..." autocomplete="off" disabled>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Problems Panel -->
+                        <div class="panel-content" id="panel-problems">
+                            <div class="problems-container" id="problems-list">
+                                <div class="empty-state">No diagnostics available. Compile your code to view problems.</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Beginner Explanations Panel -->
+                        <div class="panel-content" id="panel-explanation">
+                            <div class="explanation-container" id="explanation-content">
+                                <div class="empty-state">
+                                    <i class="fa-solid fa-book-open explanation-icon"></i>
+                                    <h3>Beginner Error Translator</h3>
+                                    <p>Select any error in the Problems tab or compile code with issues to see simple, plain-English solutions here.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            <!-- Resizer between Editor and Right Sidebar -->
+            <div class="resizer" id="right-resizer"></div>
+
+            <!-- Right Drawer: Memory Visualizer & Learn -->
+            <aside class="right-drawer" id="right-drawer">
+                <div class="drawer-header">
+                    <span>MEMORY VISUALIZER</span>
+                    <button id="btn-toggle-drawer" title="Toggle Sidebar"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+                <div class="drawer-body">
+                    <!-- Memory Map visualizer -->
+                    <div class="visualizer-section">
+                        <div class="section-title"><i class="fa-solid fa-microchip"></i> Physical Stack/Heap Layout</div>
+                        <div class="memory-grid-wrapper">
+                            <div class="memory-grid" id="memory-visualizer-grid">
+                                <div class="empty-state small">No active execution. Run a program with variable visualization.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="visualizer-section">
+                        <div class="section-title"><i class="fa-solid fa-circle-question"></i> Pointer Explainer</div>
+                        <div class="pointer-explainer" id="pointer-explanation-body">
+                            <p class="explanation-text-small">VoltC automatically monitors pointer variables (like <code>int *ptr</code>) and draws arrow diagrams showing which block of memory they reference.</p>
+                        </div>
+                    </div>
+
+                    <div class="visualizer-section">
+                        <div class="section-title"><i class="fa-solid fa-circle-info"></i> Starter Templates</div>
+                        <div class="templates-list">
+                            <button class="template-item-btn" data-template="hello">
+                                <strong>hello_world.c</strong>
+                                <span>Standard template</span>
+                            </button>
+                            <button class="template-item-btn" data-template="pointer">
+                                <strong>pointer_demo.c</strong>
+                                <span>Pointers & memory address demo</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+
+        <!-- Bottom Status Bar -->
+        <footer class="status-bar">
+            <div class="status-left">
+                <span id="status-mode" class="status-indicator-idle"><i class="fa-solid fa-circle"></i> Ready</span>
+                <span class="status-divider">|</span>
+                <span id="status-file-path">No file open</span>
+            </div>
+            
+            <div class="status-right">
+                <span id="status-cursor">Ln 1, Col 1</span>
+                <span class="status-divider">|</span>
+                <span class="autosave-toggle">
+                    <label for="cb-autosave">Autosave: </label>
+                    <input type="checkbox" id="cb-autosave" checked>
+                </span>
+                <span class="status-divider">|</span>
+                <span id="status-resources"><i class="fa-solid fa-server"></i> CPU: -- | RAM: --</span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Custom Dialog Modal -->
+    <div id="custom-modal" class="modal-overlay hidden">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span class="modal-title-wrapper">
+                    <i class="modal-icon fa-solid fa-circle-info crimson-text"></i>
+                    <span class="modal-title">VoltC Message</span>
+                </span>
+                <button class="modal-close-btn" id="modal-btn-close" title="Close"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-message">Message text</p>
+                <div class="modal-input-container hidden">
+                    <input type="text" id="modal-input-field" class="modal-input" placeholder="Type here..." autocomplete="off">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn btn-secondary" id="modal-btn-cancel">Cancel</button>
+                <button class="modal-btn btn-primary" id="modal-btn-ok">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Client Script -->
+    <script src="app.js"></script>
+</body>
+</html>

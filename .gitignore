@@ -1,0 +1,62 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+*.whl
+.eggs/
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# VoltC runtime artifacts
+.voltc/
+.voltc_bin/
+*.exe
+*.out
+
+# IDE / Editor configs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.settings/
+
+# OS generated
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# PyInstaller
+*.spec
+
+# Snap build artifacts
+snap/.snapcraft/
+*.snap
+parts/
+prime/
+stage/
+
+# Tauri build artifacts
+src-tauri/target/
+
+# Logs and temp
+*.log
+tmp/
+temp/
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# Test user files (created at runtime)
+he.c
