@@ -181,7 +181,6 @@ sudo snap install voltc_1.0_amd64.snap --classic
 - [x] Native desktop window (PyWebView)
 - [x] Snap, .deb, and AppImage packaging scripts
 - [ ] Git integration
-- [ ] AI-assisted debugging (Ollama / OpenAI / DeepSeek)
 - [ ] Cloud sync and collaborative editing
 - [ ] Plugin marketplace
 - [ ] Tauri desktop wrapper (Rust)
