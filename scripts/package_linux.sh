@@ -93,6 +93,7 @@ parts:
 apps:
   voltc:
     command: bin/voltc
+    extensions: [gnome]
     plugs: [home, network, network-bind]
 EOT
 

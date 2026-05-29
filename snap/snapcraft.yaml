@@ -34,19 +34,18 @@ parts:
       - python3-gi-cairo
       - python3-webview
       - gir1.2-gtk-3.0
+      - gir1.2-webkit2-4.1
     stage-packages:
       - python3-webview
       - gcc
       - clangd
+      - gir1.2-webkit2-4.1
 
 apps:
   voltc:
     command: bin/voltc
+    extensions: [gnome]
     plugs:
       - home
       - network
       - network-bind
-      - x11
-      - unity7
-      - opengl
-      - gsettings
