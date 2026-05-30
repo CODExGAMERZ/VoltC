@@ -1,5 +1,5 @@
 name: voltc
-version: '1.0.1'
+version: "1.0.1"
 summary: VoltC C programming IDE
 description: |
   VoltC is a modern, lightweight C programming environment specifically
